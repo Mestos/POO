@@ -13,7 +13,8 @@ public class Main {
 		GamePanel gamePanel = new GamePanel(); // Create a GamePanel.
 		window.add(gamePanel); // Add the gamePanel to this window.
 		
-		window.pack(); //Causes this window to be sized to fit the preferred size and layouts of its subcomponents(=GamePanel).
+		window.pack(); /* Causes this window to be sized to fit the preferred size 
+		* and layouts of its subcomponents(=GamePanel).*/
 		
 		window.setLocationRelativeTo(null); // Display the window at the centre of the screen.
 		window.setVisible(true); // It allows us to see this window.
