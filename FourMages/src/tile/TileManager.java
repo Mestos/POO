@@ -35,6 +35,8 @@ public class TileManager { // A manager tiles class.
 			tile[2].image = ImageIO.read(getClass().getResource("/tiles/stone.png")); // Stone tile.
 			tile[3] = new Tile(); // Instantiate this tile array.
 			tile[3].image = ImageIO.read(getClass().getResource("/tiles/grass.png")); // Grass tile.
+			tile[4] = new Tile(); // Instantiate this tile array.
+			tile[4].image = ImageIO.read(getClass().getResource("/tiles/floor.png")); // Grass tile.
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
