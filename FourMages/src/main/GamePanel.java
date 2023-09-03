@@ -7,32 +7,37 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import entity.Player;
+import tile.TileManager;
+
 public class GamePanel extends JPanel implements Runnable{ // Import the JPanel in the GamePanel; Runnable = gameThread.
 	//	SCREEN SETTINGS
-	final int originalTileSize = 16; // 16x16 tile.
+	final int originalTileSize = 16; // 16x16 tile. 
 	final int scale = 3; // Increase the size by 3 of images.
-	final int tileSize = originalTileSize * scale; // 48x48 tile.
-	final int maxScreenCol = 16; // 16 "tiles" of images.
-	final int maxScreenRow = 12; // 12 "tiles" of images.
-	final int screenWidth = tileSize * maxScreenCol; // 768 pixels.
-	final int screenHeight = tileSize * maxScreenRow; // 576 pixels.
+	public final int tileSize = originalTileSize * scale; // 48x48 tile. Put it as public to Player class access it.
+	public final int maxScreenCol = 16; // 16 "tiles" of images. Put it as public to TileManager class access it.
+	public final int maxScreenRow = 12; // 12 "tiles" of images. Put it as public to TileManager class access it.
+	public final int screenWidth = tileSize * maxScreenCol; // 768 pixels. Put it as public to TileManager class access it.
+	public final int screenHeight = tileSize * maxScreenRow; // 576 pixels. Put it as public to TileManager class access it.
 	
 	//FPS
 	int FPS = 60; // Use 60 FPS to run the game.
 	
-	KeyBinding keyH = new KeyBinding(); // Instantiate the KeyBinding.
+	TileManager tileM = new TileManager(this); // Instantiate TileManager and pass this GamePanel class.
+	KeyHandler keyH = new KeyHandler(); // Instantiate the KeyHandler.
 	Thread gameThread; // Run a repetition of frame sets.
+	Player player = new Player(this, keyH); // Instantiate the Player class with GamePanel and Key Handler.
 	
 	// SET PLAYER'S DEFAULT POSITION
-	int playerX = 375; // Set the initial position for the player in X axis.
-	int playerY = 250; // Set the initial position for the player in Y axis.
-	int playerSpeed = 4; // Set the initial speed for the player. 4 pixels moving.
+//	int playerX = 100; // Set the initial position for the player in X axis.
+//	int playerY = 100; // Set the initial position for the player in Y axis.
+//	int playerSpeed = 4; // Set the initial speed for the player. 4 pixels moving.
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // Set the dimensions of window.
 		this.setBackground(Color.black); // Define black as background.
 		this.setDoubleBuffered(true); // Reduce flickering when the content is updated in GamePanel.
-		this.addKeyListener(keyH); // Add the KeyBinding to GamePanel to recognise the key inputs.
+		this.addKeyListener(keyH); // Add the KeyHandler to GamePanel to recognise the key inputs.
 		this.setFocusable(true); // GamePanel is able to receive inputs now!
 	}
 
@@ -115,27 +120,20 @@ public class GamePanel extends JPanel implements Runnable{ // Import the JPanel 
 	}
 	
 	public void update() { // 1 - UPDATE: update information such as character positions.
-		/* The origin stays in the left corner(X: 0 and Y: 0). 
-		 * X increases going to the right and Y increases going down.*/
-		if (keyH.leftPressed == true)// keyH means KeyBinding. It calls keyPressed method when A button is pressed.
-			playerX -= playerSpeed; // Makes the player character goes left.
-		if (keyH.downPressed == true)// It calls keyPressed method when S button is pressed.
-			playerY += playerSpeed; // Makes the player character goes down.
-		if (keyH.rightPressed == true)// It calls keyPressed method when D button is pressed.
-			playerX += playerSpeed; // Makes the player character goes right.
-		if (keyH.upPressed == true)// It calls keyPressed method when W button is pressed.
-			playerY -= playerSpeed; // Makes the player character goes up.
+		player.update(); // Call the method from Player class.
 	}
 	
 	public void paintComponent(Graphics g) { // 2 - DRAW: draw the screen with the updated information.
 		super.paintComponent(g); /* It needs to use painComponent; "super" means the parent class 
-		* of the JPanel in this case.*/
+		* of the JPanel in this case.*/	
 		
 		Graphics2D g2 = (Graphics2D)g; /* Graphics2D class extends the Graphics class to provide more sophisticated 
 		* control over geometry, coordinate transformations, color management, and text layout.*/
-		g2.setColor(Color.yellow); // setColor(Color c): Sets a color to use for drawing objects.
-		g2.fillRect(playerX, playerY, tileSize, tileSize); /* fillRect: Draw a rectangle and fills 
-		* it with the specified color.*/
+		
+		tileM.draw(g2); // We're gonna core this draw method inside of the TileManager.
+		
+		player.draw(g2); // Call player.draw from Player class passing the g2 to receive the Graphics 2D.
+		
 		g2.dispose(); // dispose(): Dispose of this graphics context and release any system resources that it is using.
 	}
 }
