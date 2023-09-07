@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import entity.Player;
 import tile.TileManager;
 
+@SuppressWarnings("serial")
 public class GamePanel extends JPanel implements Runnable{ // Import the JPanel in the GamePanel; Runnable = gameThread.
 	//	SCREEN SETTINGS
 	final int originalTileSize = 16; // 16x16 tile. 
@@ -20,18 +21,20 @@ public class GamePanel extends JPanel implements Runnable{ // Import the JPanel 
 	public final int screenWidth = tileSize * maxScreenCol; // 768 pixels. Put it as public to TileManager class access it.
 	public final int screenHeight = tileSize * maxScreenRow; // 576 pixels. Put it as public to TileManager class access it.
 	
+	// WORLD SETTINGS
+	public final int maxWorldCol = 50; // Size of the column in the world map.
+	public final int maxWorldRow = 50; // Size of the row in the world map.
+	public final int worldWidth = tileSize * maxWorldCol; // Adjust pixels of the map in the width.
+	public final int worldHeight = tileSize * maxWorldRow; // Adjust pixels of the map in the Height.
+	
 	//FPS
 	int FPS = 60; // Use 60 FPS to run the game.
 	
 	TileManager tileM = new TileManager(this); // Instantiate TileManager and pass this GamePanel class.
 	KeyHandler keyH = new KeyHandler(); // Instantiate the KeyHandler.
 	Thread gameThread; // Run a repetition of frame sets.
-	Player player = new Player(this, keyH); // Instantiate the Player class with GamePanel and Key Handler.
-	
-	// SET PLAYER'S DEFAULT POSITION
-//	int playerX = 100; // Set the initial position for the player in X axis.
-//	int playerY = 100; // Set the initial position for the player in Y axis.
-//	int playerSpeed = 4; // Set the initial speed for the player. 4 pixels moving.
+	public CollisionChecker cChecker = new CollisionChecker(this); // Instantiate colision checker and pass this GamePanel.
+	public Player player = new Player(this, keyH); // Instantiate the Player class with GamePanel and Key Handler.
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // Set the dimensions of window.
@@ -45,45 +48,6 @@ public class GamePanel extends JPanel implements Runnable{ // Import the JPanel 
 		gameThread = new Thread(this); // Pass GamePanel to this Thread. It instantiate a Thread.
 		gameThread.start(); // Start the thread. It cores the run method.
 	}
-	
-//	//SLEEP METHOD
-//	// Declaring a method in sub class, which is already present in parent class. 
-//	@Override // With override line that child class can give its own implementation.
-//	public void run() { // The gameThread automatically requires the run method. 
-//		while(gameThread != null) { // Here we create a game loop that is a core of our game.
-//			// System.out.println("The game loop is running!"); // A test to print a message when the game is running.
-//			// The currentTime bellow is good to prevent the character move too fast(millions pixel/second).
-//			// long currentTime = System.nanoTime(); 
-//			/* System.nanoTime(): Returns the current value of the running
-//			 * Java Virtual Machine's high-resolution time source, in nanoseconds.*/
-//			// We can use "long currentTime2 = System.currentTimeMillis()". But, "nanoTime" is more precise.
-//			// System.out.println("Current Time: " + currentTime); // A test to print the current time.
-//			
-//			double drawInterval = 1000000000 / FPS; // ~0.017 seconds
-//			double nextDrawTime = System.nanoTime() + drawInterval; // The allocated time for single loop is 0.017s.
-//			
-//			update(); // Call update.
-//			
-//			repaint(); // Call painComponent.
-//			
-//			try { // Prevents potential interruptions that can occur during the use of "Thread.sleep().
-//				double remainingTime = nextDrawTime - System.nanoTime(); // Check the remaining time to the next draw.
-//				remainingTime /= 1000000; Convert nanoseconds to milliseconds to use sleep.
-//				
-//				if (remainingTime < 0) // If passes the draw interval, no time is left.
-//					remainingTime = 0; // Prevents a problem happens if it is a negative time in remainingTime.
-//				
-//				Thread.sleep((long) remainingTime); /* Thread.sleep only accept long type, sleep accept milliseconds.
-//				* Sleep pause the game loop. Nothing happens until the sleep time is over. */
-//				
-//				nextDrawTime += drawInterval; /* When sleep time is over, the thread awakened now. 
-//				* A new interval to the nextDrawTime is added(~0.017s).*/
-//				
-//			} catch (InterruptedException e) { // It is an exception that can thrown when in sleeping state.
-//				e.printStackTrace(); // It helps identify a problem occurred with the exception providing details.
-//			}
-//		}
-//	}
 	
 	// DELTA/ACCUMULATOR METHOD
 	@Override // With override line that child class can give its own implementation.
@@ -113,10 +77,8 @@ public class GamePanel extends JPanel implements Runnable{ // Import the JPanel 
 				System.out.println("FPS: " + drawCount); // Show how many drawing is showing in a second.
 				drawCount = 0; // Reset the number of drawing.
 				timer = 0; // Reset the second in FPS.
-			}
-				
+			}	
 		}
-		
 	}
 	
 	public void update() { // 1 - UPDATE: update information such as character positions.

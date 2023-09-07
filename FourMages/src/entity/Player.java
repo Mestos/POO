@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -13,17 +14,29 @@ public class Player extends Entity{
 	GamePanel gp; // Use the GamePanel class...
 	KeyHandler keyH; // also the KeyHandler.
 	
+	public final int screenX; // The screenX indicates where we draw the player in the screen through x axis. 
+	public final int screenY; // The screenY indicates where we draw the player in the screen through y axis. 
+	
 	public Player(GamePanel gp, KeyHandler keyH) { // Constructor.
 		this.gp = gp; // Using it in the GamePanel class...
 		this.keyH = keyH; // and Key Handler class.
+		
+		screenX = gp.screenWidth / 2 - (gp.tileSize / 2); // Let the tile in the middle of x axis.
+		screenY = gp.screenHeight / 2 - (gp.tileSize / 2); // Let the tile in the middle of y axis.
+		
+		solidArea = new Rectangle(); // Can put values collision of x, y, width and height from player here.
+		solidArea.x = 8; // Initial x axis of the tile to collision.
+		solidArea.y = 16; // Initial y axis of the tile to collision.
+		solidArea.width = 32; // Size of the width to square's collision;
+		solidArea.height = 32; // Size of the height to square's collision;
 		
 		setDefaultValues(); // Use values of setDefaultValues Method in the player.
 		getPlayerImage(); // Access getPlayerImage Method to show the player.
 	}
 	
 	public void setDefaultValues() { // Set player`s default values.
-		x = 100; // Set the initial position for the player in X axis.
-		y = 100; // Set the initial position for the player in Y axis.
+		worldX = gp.tileSize * 8; // Set the initial position for the player in X axis.
+		worldY = gp.tileSize * 8; // Set the initial position for the player in Y axis.
 		speed = 4; // Set the initial speed for the player. 4 pixels moving.
 		direction = "down"; // Initial image when starts the game.
 	}
@@ -49,19 +62,29 @@ public class Player extends Entity{
 		if (keyH.leftPressed == true || keyH.downPressed == true|| keyH.rightPressed == true || keyH.upPressed == true) {
 			if (keyH.leftPressed == true) { // It calls keyPressed method when A button is pressed.
 		        direction = "left"; // Increase
-		        x -= speed; // Makes the player character go left.
 		    }
 		    if (keyH.downPressed == true) { // It calls keyPressed method when S button is pressed.
 		        direction = "down";
-		        y += speed; // Makes the player character go down.
 		    }
 		    if (keyH.rightPressed == true) { // It calls keyPressed method when D button is pressed.
 		        direction = "right";
-		        x += speed; // Makes the player character go right.
 		    }
 		    if (keyH.upPressed == true) { // It calls keyPressed method when W button is pressed.
 		        direction = "up";
-		        y -= speed; // Makes the player character go up.
+		    }
+		    
+		    // CHECK TILE COLISION
+		    collisionOn = false; // Colision is false by default.
+		    gp.cChecker.checkTile(this); // Call the method checkTile from here and pass Player class as Entity.
+		    
+		    // IF COLLISION IS FALSE, PLAYER CAN MOVE
+		    if (collisionOn == false) { // Check if collision is false.
+		    	switch (direction) {
+		    	case "left": worldX -= speed; break; // Makes the player character go left.
+		    	case "down": worldY += speed; break; // Makes the player character go down.
+		    	case "right": worldX += speed; break; // Makes the player character go right.
+		    	case "up": worldY -= speed; break; // Makes the player character go up.
+		    	}
 		    }
 		    
 		    spriteCounter++; // A counter to mark the change of the sprite's speed-time.
@@ -110,7 +133,8 @@ public class Player extends Entity{
 				image = up2;
 			break;
 		}
-		g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null); // Draw the image based in the axis and resolution.
+		g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null); /* Draw the image of the player 
+		* based in the axis x and y of the screen.*/
 	}
 }
 
