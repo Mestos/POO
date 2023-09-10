@@ -16,10 +16,10 @@ public class Main {
 		window.pack(); /* Causes this window to be sized to fit the preferred size 
 		* and layouts of its subcomponents(=GamePanel).*/
 		
-		window.setLocationRelativeTo(null); // Display the window at the centre of the screen.
+		window.setLocationRelativeTo(null); // Display the window at the center of the screen.
 		window.setVisible(true); // It allows us to see this window.
 		
-		gamePanel.startGameThread(); // Initialise the game loop in gameThread.
+		gamePanel.startGameThread(); // Initializes the game loop in gameThread.
 	}
 
 }

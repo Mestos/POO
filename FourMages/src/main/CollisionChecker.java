@@ -1,6 +1,6 @@
 package main;
 
-import entity.Entity;
+import characters.Entity;
 
 public class CollisionChecker {
 	GamePanel gp; // Create game panel for this class.
@@ -18,7 +18,7 @@ public class CollisionChecker {
 		int entityLeftCol = entityLeftWorldX / gp.tileSize; // Value on left side from collision of the Column in pixels.
 		int entityRightCol = entityRightWorldX / gp.tileSize; // Value on right side from collision of the Column in pixels.
 		int entityTopRow = entityTopWorldY / gp.tileSize; // Value on top side from collision of the Column in pixels.
-		int entityBottomRow = entityBottomWorldY / gp.tileSize; // Value on botom side from collision of the Column in pixels.
+		int entityBottomRow = entityBottomWorldY / gp.tileSize; // Value on bottom side from collision of the Column in pixels.
 		
 		int tileNum1, tileNum2;
 		
@@ -29,7 +29,7 @@ public class CollisionChecker {
 			tileNum2 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow]; // Point of the entity on the left inferior.
 			
 			if (gp.tileM.tile[tileNum1].collision == true || gp.tileM.tile[tileNum2].collision == true) { /* If the
-			* colision of tileNum1 or tileNum2 is true. The Entity is hitting a tile and cannot move in this direction.*/
+			* collision of tileNum1 or tileNum2 is true. The Entity is hitting a tile and cannot move in this direction.*/
 				entity.collisionOn = true; // Activating collision.
 			}
 			break;
@@ -39,7 +39,7 @@ public class CollisionChecker {
 			tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow]; // Point of the entity on the right inferior.
 			
 			if (gp.tileM.tile[tileNum1].collision == true || gp.tileM.tile[tileNum2].collision == true) { /* If the
-			* colision of tileNum1 or tileNum2 is true. The Entity is hitting a tile and cannot move in this direction.*/
+			* collision of tileNum1 or tileNum2 is true. The Entity is hitting a tile and cannot move in this direction.*/
 				entity.collisionOn = true; // Activating collision.
 			}
 			break;
@@ -49,7 +49,7 @@ public class CollisionChecker {
 			tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow]; // Point of the entity on the right inferior.
 			
 			if (gp.tileM.tile[tileNum1].collision == true || gp.tileM.tile[tileNum2].collision == true) { /* If the
-			* colision of tileNum1 or tileNum2 is true. The Entity is hitting a tile and cannot move in this direction.*/
+			* collision of tileNum1 or tileNum2 is true. The Entity is hitting a tile and cannot move in this direction.*/
 				entity.collisionOn = true; // Activating collision.
 			}
 			break;
@@ -59,7 +59,7 @@ public class CollisionChecker {
 			tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow]; // Point of the entity on the right superior.
 			
 			if (gp.tileM.tile[tileNum1].collision == true || gp.tileM.tile[tileNum2].collision == true) { /* If the
-			* colision of tileNum1 or tileNum2 is true. The Entity is hitting a tile and cannot move in this direction.*/
+			* collision of tileNum1 or tileNum2 is true. The Entity is hitting a tile and cannot move in this direction.*/
 				entity.collisionOn = true; // Activating collision.
 			}
 			break;

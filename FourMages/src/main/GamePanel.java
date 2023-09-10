@@ -7,10 +7,11 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import entity.Player;
+import characters.Player;
+import object.SuperObject;
 import tile.TileManager;
 
-@SuppressWarnings("serial")
+@SuppressWarnings("serial") // Write it to avoid version notification in the code.
 public class GamePanel extends JPanel implements Runnable{ // Import the JPanel in the GamePanel; Runnable = gameThread.
 	//	SCREEN SETTINGS
 	final int originalTileSize = 16; // 16x16 tile. 
@@ -27,20 +28,25 @@ public class GamePanel extends JPanel implements Runnable{ // Import the JPanel 
 	public final int worldWidth = tileSize * maxWorldCol; // Adjust pixels of the map in the width.
 	public final int worldHeight = tileSize * maxWorldRow; // Adjust pixels of the map in the Height.
 	
-	//FPS
+	// FPS
 	int FPS = 60; // Use 60 FPS to run the game.
 	
+	// SYSTEM
 	TileManager tileM = new TileManager(this); // Instantiate TileManager and pass this GamePanel class.
 	KeyHandler keyH = new KeyHandler(); // Instantiate the KeyHandler.
-	Thread gameThread; // Run a repetition of frame sets.
-	public CollisionChecker cChecker = new CollisionChecker(this); // Instantiate colision checker and pass this GamePanel.
+	Thread gameThread; // Run a repetition of frame sets instantiating the Thread.
+	public CollisionChecker cChecker = new CollisionChecker(this); // Instantiate coLlision checker and pass this GamePanel.
+	public UI ui = new UI(this); // Instantiate the UI class and pass this game panel.
+	public SuperObject obj[] = new SuperObject[5]; // We prepare 5 slots for objects.
+	
+	// ENTITY
 	public Player player = new Player(this, keyH); // Instantiate the Player class with GamePanel and Key Handler.
 	
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight)); // Set the dimensions of window.
 		this.setBackground(Color.black); // Define black as background.
 		this.setDoubleBuffered(true); // Reduce flickering when the content is updated in GamePanel.
-		this.addKeyListener(keyH); // Add the KeyHandler to GamePanel to recognise the key inputs.
+		this.addKeyListener(keyH); // Add the KeyHandler to GamePanel to recognize the key inputs.
 		this.setFocusable(true); // GamePanel is able to receive inputs now!
 	}
 
@@ -88,13 +94,40 @@ public class GamePanel extends JPanel implements Runnable{ // Import the JPanel 
 	public void paintComponent(Graphics g) { // 2 - DRAW: draw the screen with the updated information.
 		super.paintComponent(g); /* It needs to use painComponent; "super" means the parent class 
 		* of the JPanel in this case.*/	
-		
 		Graphics2D g2 = (Graphics2D)g; /* Graphics2D class extends the Graphics class to provide more sophisticated 
 		* control over geometry, coordinate transformations, color management, and text layout.*/
 		
+		// DEBUG
+		long  drawStart = 0; // Initializes the time.
+		
+		if (keyH.checkDrawTime == true) { // If debug mode is active.
+			drawStart = System.nanoTime(); // System.nanoTime checks the time.
+		}
+		
+		// TILE
 		tileM.draw(g2); // We're gonna core this draw method inside of the TileManager.
 		
+		// OBJECT
+		for (int i = 0; i < obj.length; i++) { // Scan object array one by one.
+			if (obj[i] != null) // Check if the slot is not empty to avoid NullPointer error...
+				obj[i].draw(g2, this); // Then, draw it.
+		}
+		
+		// PLAYER
 		player.draw(g2); // Call player.draw from Player class passing the g2 to receive the Graphics 2D.
+		
+		// UI
+		ui.draw(g2); // Call draw method. UI cannot be hidden by tiles or player, so it comes after player.draw.
+		
+		// DEBUG
+		if (keyH.checkDrawTime == true) {
+			long drawEnd = System.nanoTime(); // After drawing the components...
+			long passed = drawEnd - drawStart; // show how many time takes to draw.
+			g2.setColor(Color.WHITE); // Define the color font.
+			g2.drawString("Draw Time: " + passed, 10, 400); // Show the time passed on the screen.
+			System.out.println("Draw Time: " + passed); // Show the time passed on the console.
+		} // Last test in my computer: 2076800 / 1 000 000 000 = ~0.002 seconds
+		  // Optimized test in my computer: 673200 / 1 000 000 000 = 0.00067 seconds
 		
 		g2.dispose(); // dispose(): Dispose of this graphics context and release any system resources that it is using.
 	}

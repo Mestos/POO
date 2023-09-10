@@ -9,9 +9,10 @@ import java.io.InputStreamReader;
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
+import main.UtilityTool;
 
 public class TileManager { // A manager tiles class.
-	GamePanel gp; // Create a game panel to use the tile.
+	GamePanel gp; // Instantiate the game panel to use the tile.
 	public Tile[] tile; // A group of tiles in the array.
 	public int mapTileNum[][]; // Initialize the mapTileNum to generate the values of the code tiles.
 	
@@ -26,19 +27,22 @@ public class TileManager { // A manager tiles class.
 	}
 	
 	public void getTileImage() { // Load these tile images in this getTileImage Method
+		setup(0, "walkway", false); // Pass to setup (arrays's code, png's name, collision).
+		setup(1, "wall", true); // Pass to setup (arrays's code, png's name, collision).
+		setup(2, "stone", true); // Pass to setup (arrays's code, png's name, collision).
+		setup(3, "grass", false); // Pass to setup (arrays's code, png's name, collision).
+		setup(4, "floor", false); // Pass to setup (arrays's code, png's name, collision).
+	}
+	
+	public void setup(int index, String imageName, boolean collision) { // Constructor.
+		UtilityTool uTool = new UtilityTool(); // Instantiate this new UnityTool.
+		
 		try {
-			tile[0] = new Tile(); // Instantiate this tile array.
-			tile[0].image = ImageIO.read(getClass().getResource("/tiles/walkway.png")); // Walkway tile.
-			tile[1] = new Tile(); // Instantiate this tile array.
-			tile[1].image = ImageIO.read(getClass().getResource("/tiles/wall.png")); // Wall tile.
-			tile[1].collision = true; // Tile with collision.
-			tile[2] = new Tile(); // Instantiate this tile array.
-			tile[2].image = ImageIO.read(getClass().getResource("/tiles/stone.png")); // Stone tile.
-			tile[2].collision = true; // Tile with collision.
-			tile[3] = new Tile(); // Instantiate this tile array.
-			tile[3].image = ImageIO.read(getClass().getResource("/tiles/grass.png")); // Grass tile.
-			tile[4] = new Tile(); // Instantiate this tile array.
-			tile[4].image = ImageIO.read(getClass().getResource("/tiles/floor.png")); // floor tile.
+			tile[index] = new Tile(); // Instantiate the new tile array.
+			tile[index].image = ImageIO.read(getClass().getResource("/tiles/" + imageName +".png")); // Read the image.
+			tile[index].image = uTool.scaleImage(tile[index].image, gp.tileSize, gp.tileSize); // Get scaled image from utility tool.
+			tile[index].collision = collision; // Set the collision.
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -102,8 +106,7 @@ public class TileManager { // A manager tiles class.
 				// Center of the screen - player screen y axis. +1 tile in the +y axis (+ gp.tileSize).
 				worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) { 
 				// Center of the screen + player screen y axis. +1 tile in the -y axis (+ gp.tileSize).
-				g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null); // Drawing the tiles.
-
+				g2.drawImage(tile[tileNum].image, screenX, screenY, null); // Drawing the tiles without scaling it.
 			}
 			
 			worldCol++; // Going to draw the next tile.
